@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VentureIQ — AI-Powered Startup Investment Intelligence</title>
+<meta name="description" content="VentureIQ: ML-powered startup investment decision support system with risk scoring, portfolio simulation, and investor network analysis."/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ═══ PARTICLE CANVAS ═══ -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <div class="nav-brand">
+    <div class="nav-logo"><span>V</span><div class="logo-pulse"></div></div>
+    <div>
+      <div class="nav-title">VentureIQ</div>
+      <div class="nav-subtitle">AI Investment Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links" id="nav-links">
+    <button class="nav-link" data-section="hero" onclick="showSection('hero')">🏠 Home</button>
+    <button class="nav-link" data-section="dashboard" onclick="showSection('dashboard')">📊 Dashboard</button>
+    <button class="nav-link" data-section="risk" onclick="showSection('risk')">🧠 Risk Lab</button>
+    <button class="nav-link" data-section="portfolio" onclick="showSection('portfolio')">💼 Portfolio</button>
+    <button class="nav-link" data-section="network" onclick="showSection('network')">🕸️ Network</button>
+    <button class="nav-link" data-section="roi" onclick="showSection('roi')">💹 ROI Calc</button>
+    <button class="nav-link" data-section="analysis" onclick="showSection('analysis')">📈 Analysis</button>
+    <button class="nav-link" data-section="search" onclick="showSection('search')">🔍 Search</button>
+    <button class="nav-link" data-section="compare" onclick="showSection('compare')">⚖️ Compare</button>
+    <button class="nav-link" data-section="recommendations" onclick="showSection('recommendations')">⭐ AI Picks</button>
+    <button class="nav-link" data-section="watchlist" onclick="showSection('watchlist')">📌 Watchlist</button>
+    <button class="nav-link" data-section="heatmap" onclick="showSection('heatmap')">🗺️ Heatmap</button>
+  </div>
+  <button class="nav-toggle" id="nav-toggle" onclick="toggleMobileNav()">☰</button>
+</nav>
+
+<main>
+
+<!-- ════════════ HERO ════════════ -->
+<div class="section active" id="section-hero">
+  <div class="hero">
+    <div class="hero-badge">🚀 AI-Powered Investment Intelligence</div>
+    <h1 class="hero-title">Make <span class="gradient-text">Smarter</span> Startup Investments</h1>
+    <p class="hero-desc">Powered by machine learning risk analysis, portfolio simulation, and real-time market intelligence across <span id="hero-startups">0</span>+ startups.</p>
+    <div class="hero-stats" id="hero-stats"></div>
+    <div class="hero-actions">
+      <button class="btn btn-gold btn-lg" onclick="showSection('dashboard')">📊 Explore Dashboard</button>
+      <button class="btn btn-outline btn-lg" onclick="showSection('risk')">🧠 Risk Analysis</button>
+    </div>
+    <div class="hero-features">
+      <div class="hf-card"><div class="hf-icon">🧠</div><div class="hf-title">ML Risk Scoring</div><div class="hf-desc">Multi-dimensional risk & growth analysis</div></div>
+      <div class="hf-card"><div class="hf-icon">💼</div><div class="hf-title">Portfolio Simulator</div><div class="hf-desc">Build & test virtual portfolios</div></div>
+      <div class="hf-card"><div class="hf-icon">🕸️</div><div class="hf-title">Investor Network</div><div class="hf-desc">Co-investment graph visualization</div></div>
+      <div class="hf-card"><div class="hf-icon">💹</div><div class="hf-title">ROI Calculator</div><div class="hf-desc">Scenario-based return projections</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ DASHBOARD ════════════ -->
+<div class="section" id="section-dashboard">
+  <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+    <div><h1>Investment Dashboard</h1><p>Real-time insights from Indian startup funding data</p></div>
+    <button class="btn btn-outline" onclick="exportDashboardPDF()" id="export-pdf-btn">📄 Export PDF Report</button>
+  </div>
+  <div class="kpi-grid" id="kpi-grid"><div class="skeleton-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div></div>
+  <div class="charts-grid">
+    <div class="chart-card span-8"><div class="chart-title">Funding Volume by Year</div><div class="chart-subtitle">Total funding in ₹ Crore with deal count overlay</div><div class="chart-wrap"><canvas id="chartYear"></canvas></div></div>
+    <div class="chart-card span-4"><div class="chart-title">Investment Stage Mix</div><div class="chart-subtitle">Deal count by funding stage</div><div class="chart-wrap"><canvas id="chartStage"></canvas></div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card span-6"><div class="chart-title">Top Industries by Funding</div><div class="chart-subtitle">₹ Crore invested per sector</div><div class="chart-wrap tall"><canvas id="chartIndustry"></canvas></div></div>
+    <div class="chart-card span-6"><div class="chart-title">Top Cities by Investment</div><div class="chart-subtitle">Startup hubs ranked by funding</div><div class="chart-wrap tall"><canvas id="chartCity"></canvas></div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card span-12"><div class="chart-title">Funding Funnel by Stage</div><div class="chart-subtitle">How deals progress through funding stages</div><div id="funnel-container" class="funnel-container"></div></div>
+  </div>
+</div>
+
+<!-- ════════════ RISK LAB ════════════ -->
+<div class="section" id="section-risk">
+  <div class="page-header"><h1>🧠 ML Risk Analysis Lab</h1><p>Multi-dimensional startup scoring using machine learning</p></div>
+  <div class="risk-overview" id="risk-overview"><div class="spinner"></div></div>
+  <div class="charts-grid" style="margin-top:1rem">
+    <div class="chart-card span-6"><div class="chart-title">Risk vs Growth Scatter</div><div class="chart-subtitle">Bubble size = Total Funding</div><div class="chart-wrap tall"><canvas id="chartRiskScatter"></canvas></div></div>
+    <div class="chart-card span-6"><div class="chart-title">Risk Distribution</div><div class="chart-subtitle">Startups by risk category</div><div class="chart-wrap tall"><canvas id="chartRiskDist"></canvas></div></div>
+  </div>
+  <div class="chart-card" style="margin-top:1rem"><div class="chart-title">Top 20 Startups — Investability Ranking</div><div class="chart-subtitle">Scored by growth potential, risk, market momentum</div><div id="risk-table"></div></div>
+</div>
+
+<!-- ════════════ PORTFOLIO ════════════ -->
+<div class="section" id="section-portfolio">
+  <div class="page-header"><h1>💼 Portfolio Simulator</h1><p>Build a virtual portfolio and see projected returns</p></div>
+  <div class="portfolio-builder">
+    <div class="portfolio-inputs" id="portfolio-inputs">
+      <div class="portfolio-row"><input class="p-input p-name" placeholder="Startup name" data-idx="0"/><input class="p-input p-amount" type="number" placeholder="₹ Cr" data-idx="0"/><button class="btn-icon" onclick="removePortfolioRow(this)">✕</button></div>
+      <div class="portfolio-row"><input class="p-input p-name" placeholder="Startup name" data-idx="1"/><input class="p-input p-amount" type="number" placeholder="₹ Cr" data-idx="1"/><button class="btn-icon" onclick="removePortfolioRow(this)">✕</button></div>
+    </div>
+    <div class="portfolio-actions">
+      <button class="btn btn-outline" onclick="addPortfolioRow()">+ Add Startup</button>
+      <button class="btn btn-gold" onclick="simulatePortfolio()">🚀 Simulate Returns</button>
+    </div>
+  </div>
+  <div id="portfolio-results"></div>
+</div>
+
+<!-- ════════════ NETWORK ════════════ -->
+<div class="section" id="section-network">
+  <div class="page-header"><h1>🕸️ Investor Network Graph</h1><p>Co-investment relationships between top investors</p></div>
+  <div class="network-container"><canvas id="networkCanvas" width="1200" height="600"></canvas></div>
+  <div id="network-info" class="network-info"></div>
+</div>
+
+<!-- ════════════ ROI CALCULATOR ════════════ -->
+<div class="section" id="section-roi">
+  <div class="page-header"><h1>💹 ROI Calculator</h1><p>Scenario-based investment return projections</p></div>
+  <div class="roi-form">
+    <input class="roi-input" id="roi-startup" placeholder="Startup name (e.g. Flipkart)"/>
+    <input class="roi-input" id="roi-amount" type="number" placeholder="Investment ₹ Cr" value="10"/>
+    <input class="roi-input" id="roi-years" type="number" placeholder="Years" value="5" min="1" max="10"/>
+    <button class="btn btn-gold" onclick="calculateROI()">Calculate ROI</button>
+  </div>
+  <div id="roi-results"></div>
+</div>
+
+<!-- ════════════ ANALYSIS ════════════ -->
+<div class="section" id="section-analysis">
+  <div class="page-header"><h1>📈 Deep Analysis</h1><p>Trends, investor activity & YoY growth</p></div>
+  <div class="charts-grid" style="margin-bottom:1rem">
+    <div class="chart-card span-12"><div class="chart-title">Monthly Funding Trend</div><div class="chart-subtitle">₹ Crore raised each month</div><div class="chart-wrap tall"><canvas id="chartMonthly"></canvas></div></div>
+  </div>
+  <div class="charts-grid" style="margin-bottom:1rem">
+    <div class="chart-card span-6"><div class="chart-title">Top Investors by Deals</div><div class="chart-subtitle">Most active venture investors</div><div class="chart-wrap tall"><canvas id="chartInvestors"></canvas></div></div>
+    <div class="chart-card span-6"><div class="chart-title">YoY Growth Rate</div><div class="chart-subtitle">Funding & deal growth percentage</div><div class="chart-wrap tall"><canvas id="chartYoY"></canvas></div></div>
+  </div>
+  <div class="chart-card"><div class="chart-title">Top 20 Funded Startups</div><div class="chart-subtitle">Ranked by total funding received</div><div style="overflow-x:auto;margin-top:1rem" id="top-startups-table"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ════════════ SEARCH ════════════ -->
+<div class="section" id="section-search">
+  <div class="page-header"><h1>🔍 Startup Explorer</h1><p>Search and discover startup profiles</p></div>
+  <div class="search-bar"><span class="search-icon">🔍</span><input class="search-input" id="search-input" type="text" placeholder="Search startup name e.g. Flipkart, BYJU'S, Zomato…" oninput="doSearch(this.value)"/><div class="autocomplete-list" id="autocomplete-list"></div></div>
+  <div id="search-results" class="search-results"><div class="empty-state"><div class="emoji">🚀</div><p>Type a startup name above to search</p></div></div>
+  <!-- Startup Profile Modal -->
+  <div class="modal-overlay" id="profile-modal"><div class="modal" id="profile-modal-content"></div></div>
+</div>
+
+<!-- ════════════ COMPARE ════════════ -->
+<div class="section" id="section-compare">
+  <div class="page-header"><h1>⚖️ Head-to-Head Compare</h1><p>Enter up to 4 startup names and compare metrics side by side</p></div>
+  <div class="compare-inputs">
+    <input class="compare-input" id="c1" placeholder="Startup 1"/><input class="compare-input" id="c2" placeholder="Startup 2"/>
+    <input class="compare-input" id="c3" placeholder="Startup 3 (optional)"/><input class="compare-input" id="c4" placeholder="Startup 4 (optional)"/>
+    <button class="btn btn-gold" onclick="doCompare()">Compare</button>
+  </div>
+  <div id="compare-results"><div class="empty-state"><div class="emoji">⚖️</div><p>Enter startup names above and click Compare</p></div></div>
+  <div class="charts-grid" style="margin-top:1rem"><div class="chart-card span-12" id="compare-chart-card" style="display:none"><div class="chart-title">Comparison Radar</div><div class="chart-wrap tall"><canvas id="chartCompareRadar"></canvas></div></div></div>
+</div>
+
+<!-- ════════════ AI PICKS ════════════ -->
+<div class="section" id="section-recommendations">
+  <div class="page-header"><h1>⭐ AI Investment Picks</h1><p>Startups scored by ML-powered investability index</p></div>
+  <div class="rec-grid" id="rec-grid"><div class="spinner"></div></div>
+</div>
+
+<!-- ════════════ WATCHLIST ════════════ -->
+<div class="section" id="section-watchlist">
+  <div class="page-header"><h1>📌 My Watchlist</h1><p>Track startups you're interested in investing</p></div>
+  <div class="watchlist-add">
+    <input class="search-input" id="watchlist-add-input" placeholder="Type startup name to add to watchlist..." style="max-width:400px"/>
+    <button class="btn btn-gold" onclick="addToWatchlist()" style="margin-left:8px">+ Add</button>
+  </div>
+  <div id="watchlist-grid" class="watchlist-grid" style="margin-top:1rem"></div>
+</div>
+
+<!-- ════════════ HEATMAP ════════════ -->
+<div class="section" id="section-heatmap">
+  <div class="page-header"><h1>🗺️ Funding Heatmap</h1><p>Industry × Month funding intensity visualization</p></div>
+  <div class="chart-card" style="margin-bottom:1rem">
+    <div class="chart-title">Industry-Month Funding Heatmap</div>
+    <div class="chart-subtitle">Color intensity = funding amount in ₹ Crore</div>
+    <div id="heatmap-container" class="heatmap-container"></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card span-6"><div class="chart-title">Industry Growth Rates</div><div class="chart-subtitle">Historical YoY growth by sector</div><div class="chart-wrap tall"><canvas id="chartIndustryGrowth"></canvas></div></div>
+    <div class="chart-card span-6"><div class="chart-title">Deals per Quarter</div><div class="chart-subtitle">Quarterly deal distribution</div><div class="chart-wrap tall"><canvas id="chartQuarterly"></canvas></div></div>
+  </div>
+</div>
+
+</main>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="/static/js/particles.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
